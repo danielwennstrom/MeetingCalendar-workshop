@@ -29,7 +29,7 @@ const MenuItem = ({
       onMouseLeave={() => setIsHovered(false)}
       className={`flex items-center gap-2 px-5 py-3 cursor-pointer border-gray-300 ${
         !isLast ? "border-b" : ""
-      } ${isActive ? "bg-blue-400 font-semibold" : "hover:bg-blue-300"}`}
+      } ${isActive ? "bg-blue-400 font-semibold text-white" : "hover:bg-blue-300 hover:text-white"}`}
     >
       {showActiveIcon ? <IconActive /> : <IconInactive />}
       {label}
