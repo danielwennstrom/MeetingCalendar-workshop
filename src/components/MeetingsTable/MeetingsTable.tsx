@@ -10,9 +10,15 @@ type TableProps = {
   }[];
   IconEdit: IconType;
   IconDelete: IconType;
+  onDelete: (idx: number) => void;
 };
 
-const MeetingsTable = ({ meetingsData, IconEdit, IconDelete }: TableProps) => {
+const MeetingsTable = ({
+  meetingsData,
+  IconEdit,
+  IconDelete,
+  onDelete,
+}: TableProps) => {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="mt-8 flow-root">
@@ -87,6 +93,7 @@ const MeetingsTable = ({ meetingsData, IconEdit, IconDelete }: TableProps) => {
                       <button
                         type="button"
                         className="rounded-sm bg-red-500 px-2 py-2 text-s font-semibold text-white shadow-xs hover:bg-red-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() => onDelete(idx)}
                       >
                         <IconDelete />
                       </button>
@@ -100,6 +107,6 @@ const MeetingsTable = ({ meetingsData, IconEdit, IconDelete }: TableProps) => {
       </div>
     </div>
   );
-}
+};
 
 export default MeetingsTable;

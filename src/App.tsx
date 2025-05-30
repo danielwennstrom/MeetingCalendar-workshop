@@ -10,15 +10,12 @@ import {
   BsGridFill,
   BsPencilSquare,
   BsTrash,
-
 } from "react-icons/bs";
 import Menu from "./components/Menu/Menu";
 import MeetingsTable from "./components/MeetingsTable/MeetingsTable";
 import "./App.css";
 
 function App() {
-  const [activeIndex, setActiveIndex] = useState(0);
-
   const meetingsData = [
     {
       title: "Sprint Planning",
@@ -79,6 +76,38 @@ function App() {
     },
   ];
 
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [meetings, setMeetings] = useState(meetingsData);
+  const [formData, setFormData] = useState({
+    meetingTitle: "",
+    meetingDate: "",
+    meetingTime: "",
+    meetingLevel: "Team",
+    meetingParticipants: "",
+    meetingDescription: "",
+  });
+
+  function handleSaveItem(e: React.FormEvent) {
+    e.preventDefault();
+    const newMeetings = [...meetings];
+    newMeetings.push({
+      title: formData.meetingTitle,
+      date: formData.meetingDate,
+      time: formData.meetingTime,
+      level: formData.meetingLevel,
+      description: formData.meetingDescription,
+    });
+
+    setMeetings(newMeetings);
+  }
+
+  function handleDeleteItem(idx: number) {
+    const newMeetings = [...meetings];
+    newMeetings.splice(idx, 1);
+
+    setMeetings(newMeetings);
+  }
+
   return (
     <div className="flex flex-col md:flex-row space-x-5 my-7">
       <Menu
@@ -115,6 +144,13 @@ function App() {
                           name="meetingTitle"
                           type="text"
                           placeholder="Enter meeting title"
+                          value={formData.meetingTitle}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              meetingTitle: e.target.value,
+                            })
+                          }
                           className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                         />
                       </div>
@@ -136,6 +172,13 @@ function App() {
                             name="meetingDate"
                             type="text"
                             placeholder="dd/mm/yyyy"
+                            value={formData.meetingDate}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                meetingDate: e.target.value,
+                              })
+                            }
                             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           />
                         </div>
@@ -154,6 +197,13 @@ function App() {
                             name="meetingTime"
                             type="text"
                             placeholder="--:--"
+                            value={formData.meetingTime}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                meetingTime: e.target.value,
+                              })
+                            }
                             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           />
                         </div>
@@ -168,9 +218,13 @@ function App() {
                         </label>
                         <div className="mt-2">
                           <select
-                            id="currency"
-                            name="currency"
-                            aria-label="Currency"
+                            value={formData.meetingLevel}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                meetingLevel: e.target.value,
+                              })
+                            }
                             className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           >
                             <option>Team</option>
@@ -193,6 +247,13 @@ function App() {
                             name="participants"
                             type="text"
                             placeholder="Enter participant emails"
+                            value={formData.meetingParticipants}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                meetingParticipants: e.target.value,
+                              })
+                            }
                             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           />
                         </div>
@@ -210,8 +271,14 @@ function App() {
                             id="description"
                             name="description"
                             rows={4}
+                            value={formData.meetingDescription}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                meetingDescription: e.target.value,
+                              })
+                            }
                             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                            defaultValue={""}
                           />
                         </div>
                       </div>
@@ -222,6 +289,7 @@ function App() {
                   <div className="mt-6 flex items-center justify-end gap-x-6 ">
                     <button
                       type="submit"
+                      onClick={handleSaveItem}
                       className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Create Meeting
@@ -236,7 +304,12 @@ function App() {
           <h2 className="text-3xl font-semibold text-gray-900">
             List of Created Meetings
           </h2>
-          <MeetingsTable meetingsData={meetingsData} IconEdit={BsPencilSquare} IconDelete={BsTrash} />
+          <MeetingsTable
+            meetingsData={meetings}
+            IconEdit={BsPencilSquare}
+            IconDelete={BsTrash}
+            onDelete={handleDeleteItem}
+          />
         </div>
       </div>
     </div>
