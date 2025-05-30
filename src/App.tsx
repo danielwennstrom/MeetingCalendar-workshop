@@ -8,12 +8,61 @@ import {
   BsPersonFill,
   BsGrid,
   BsGridFill,
+  BsPencilSquare,
+  BsTrash,
+
 } from "react-icons/bs";
 import Menu from "./components/Menu/Menu";
+import MeetingsTable from "./components/MeetingsTable/MeetingsTable";
 import "./App.css";
 
 function App() {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const meetingsData = [
+    {
+      title: "Sprint Planning",
+      description: "Outline tasks for the upcoming sprint.",
+      date: "2023-11-02",
+      time: "10:00",
+      level: "Development",
+    },
+    {
+      title: "All-Hands Meeting",
+      description: "Company-wide updates and announcements.",
+      date: "2023-10-20",
+      time: "09:30",
+      level: "General",
+    },
+    {
+      title: "UI Design Review",
+      description: "Review latest designs and gather feedback.",
+      date: "2023-10-25",
+      time: "16:00",
+      level: "Team",
+    },
+    {
+      title: "Code Retrospective",
+      description: "Analyze recent release and identify improvements.",
+      date: "2023-11-05",
+      time: "15:00",
+      level: "Development",
+    },
+    {
+      title: "Team Lunch",
+      description: "Casual lunch for team bonding.",
+      date: "2023-10-18",
+      time: "12:00",
+      level: "Team",
+    },
+    {
+      title: "Q4 Strategy Session",
+      description: "Discuss goals and plans for Q4.",
+      date: "2023-11-10",
+      time: "11:00",
+      level: "General",
+    },
+  ];
 
   const menuItems = [
     { label: "Dashboard", IconActive: BsGrid, IconInactive: BsGridFill },
@@ -43,7 +92,7 @@ function App() {
           <form>
             <div className="space-y-12">
               <div className="pb-3">
-                <h2 className="text-base/7 font-semibold text-gray-900">
+                <h2 className="text-3xl font-semibold text-gray-900">
                   Schedule a New Meeting
                 </h2>
                 <p className="mt-1 text-sm/6 text-gray-600">
@@ -154,15 +203,15 @@ function App() {
                           htmlFor="description"
                           className="block text-sm/6 font-medium text-gray-900"
                         >
-                          Description
+                          Enter meeting description
                         </label>
                         <div className="mt-2">
-                          <input
+                          <textarea
                             id="description"
                             name="description"
-                            type="text"
-                            placeholder="Enter meeting description"
-                            className="block w-full rounded-md h-32 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                            rows={4}
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                            defaultValue={""}
                           />
                         </div>
                       </div>
@@ -189,8 +238,11 @@ function App() {
             </div>
           </form>
         </div>
-        <div className="bg-white flex flex-col justify-center px-5 py-3 md:my-7 rounded-md shadow-md">
-          <p>Test</p>
+        <div className="bg-white flex flex-col justify-center px-5 py-3 my-7 rounded-md shadow-md">
+          <h2 className="text-3xl font-semibold text-gray-900">
+            List of Created Meetings
+          </h2>
+          <MeetingsTable meetingsData={meetingsData} IconEdit={BsPencilSquare} IconDelete={BsTrash} />
         </div>
       </div>
     </div>
