@@ -48,6 +48,14 @@ function App() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [meetings, setMeetings] = useState(meetingsData);
 
+  function handleSaveItem(meeting: Meeting) {
+    console.log(meeting);
+    const newMeetings = [...meetings];
+    newMeetings.push(meeting);
+    
+    setMeetings(newMeetings);
+  }
+
   function handleDeleteItem(idx: number) {
     const newMeetings = [...meetings];
     newMeetings.splice(idx, 1);
@@ -64,7 +72,7 @@ function App() {
       />
 
       <div className="flex flex-col lg:w-screen">
-        <CreateMeetingForm currentMeetingsData={meetings} setMeetings={setMeetings} />
+        <CreateMeetingForm currentMeetingsData={meetings} handleSaveItem={handleSaveItem} />
 
         <div className="bg-white justify-center px-5 py-3 my-7 rounded-md shadow-md">
           <h2 className="text-3xl font-semibold text-gray-900">
