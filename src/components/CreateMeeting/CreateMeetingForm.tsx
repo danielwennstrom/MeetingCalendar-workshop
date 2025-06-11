@@ -2,34 +2,51 @@ import type { Meeting } from "../../types/Meeting";
 import { useForm } from "react-hook-form";
 
 type Props = {
-  currentMeetingsData: Meeting[];
-  handleSaveItem: (meetings: Meeting) => void;
+  onSave?: (meeting: Meeting) => void;
+  editing?: Meeting | undefined;
+  onEdit?: (meeting: Meeting) => void;
+  onClose?: () => void;
+  isModal?: boolean;
 };
 
-function CreateMeetingForm({ handleSaveItem }: Props) {
+function CreateMeetingForm({ onSave, onEdit, onClose, editing, isModal }: Props) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Meeting>();
+  } = useForm<Meeting>({
+    defaultValues: editing,
+  });
 
   const onSubmit = (data: Meeting) => {
-    handleSaveItem(data);
+    if (!isModal && onSave !== undefined) {
+      onSave(data);
+    } else if (onEdit != null) {
+      onEdit(data);
+    }
   };
 
   return (
     <div className="w-full flex flex-col">
-      <div className="bg-white flex flex-col justify-center px-5 py-3 my-7 md:my-0 rounded-md shadow-md">
+      <div
+        className={`bg-white flex flex-col justify-center ${
+          !isModal ? "px-5 py-3 my-7 md:my-0 rounded-md shadow-md" : ""
+        }`}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-12">
             <div className="pb-3">
-              <h2 className="text-3xl font-semibold text-gray-900">
-                Schedule a New Meeting
-              </h2>
-              <p className="mt-1 text-sm/6 text-gray-600">
-                This information will be displayed publicly so be careful what
-                you share.
-              </p>
+              {!isModal && (
+                <>
+                  <h2 className="text-3xl font-semibold text-gray-900">
+                    Schedule a New Meeting
+                  </h2>
+                  <p className="mt-1 text-sm/6 text-gray-600">
+                    This information will be displayed publicly so be careful
+                    what you share.
+                  </p>
+                </>
+              )}
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
                 <div className="sm:col-span-12">
@@ -169,12 +186,20 @@ function CreateMeetingForm({ handleSaveItem }: Props) {
                 </div>
               </div>
               <div className="col-span-full">
-                <div className="mt-6 flex items-center justify-end gap-x-6 ">
+                <div className="mt-6 flex items-center justify-end gap-x-3">
+                  {isModal && (
+                    <button
+                      onClick={onClose}
+                      className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                    >
+                      Cancel
+                    </button>
+                  )}
                   <button
                     type="submit"
                     className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Create Meeting
+                    {!isModal ? "Create" : "Update"} meeting
                   </button>
                 </div>
               </div>

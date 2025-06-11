@@ -1,10 +1,13 @@
 import type { IconType } from "react-icons";
 import type { Meeting } from "../../types/Meeting";
+import { useState } from "react";
+import ModalEditEntry from "./ModalEditEntry";
 
 type TableProps = {
   meetingsData: Meeting[];
   IconEdit: IconType;
   IconDelete: IconType;
+  onEdit: (updatedMeeting: Meeting) => void;
   onDelete: (idx: number) => void;
 };
 
@@ -13,7 +16,24 @@ const MeetingsTable = ({
   IconEdit,
   IconDelete,
   onDelete,
+  onEdit
 }: TableProps) => {
+  const [editingIdx, setEditingIdx] = useState<number | null>(null);
+
+  function handleEditItem(idx: number) {
+    setEditingIdx(idx);
+  }
+
+  function closeModal() {
+    setEditingIdx(null);
+  }
+
+  function handleSaveItem(meeting: Meeting) {
+    onEdit(meeting);
+    
+    closeModal();
+  }
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="mt-8 flow-root">
@@ -82,6 +102,7 @@ const MeetingsTable = ({
                       <button
                         type="button"
                         className="rounded-sm bg-amber-500 px-2 py-2 text-s font-semibold text-white shadow-xs hover:bg-amber-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() => handleEditItem(idx)}
                       >
                         <IconEdit />
                       </button>
@@ -97,6 +118,17 @@ const MeetingsTable = ({
                 ))}
               </tbody>
             </table>
+
+            {editingIdx != null && meetingsData[editingIdx] && (
+              <ModalEditEntry
+                meeting={meetingsData[editingIdx]}
+                onEdit={(updatedMeeting: Meeting) => {
+                  handleSaveItem(updatedMeeting);
+                  closeModal();
+                }}
+                onClose={closeModal}
+              />
+            )}
           </div>
         </div>
       </div>

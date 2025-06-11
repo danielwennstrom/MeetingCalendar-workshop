@@ -49,7 +49,6 @@ function App() {
   const [meetings, setMeetings] = useState(meetingsData);
 
   function handleSaveItem(meeting: Meeting) {
-    console.log(meeting);
     const newMeetings = [...meetings];
     newMeetings.push(meeting);
     
@@ -63,6 +62,12 @@ function App() {
     setMeetings(newMeetings);
   }
 
+  function handleEditItem(updatedMeeting: Meeting) {
+    const newMeetings = meetings.map((m) => (m.id === updatedMeeting.id ? updatedMeeting : m));
+    
+    setMeetings(newMeetings);
+  }
+
   return (
     <div className="flex flex-col lg:flex-row space-x-5 my-7">
       <Menu
@@ -72,7 +77,7 @@ function App() {
       />
 
       <div className="flex flex-col lg:w-screen">
-        <CreateMeetingForm currentMeetingsData={meetings} handleSaveItem={handleSaveItem} />
+        <CreateMeetingForm onSave={handleSaveItem} />
 
         <div className="bg-white justify-center px-5 py-3 my-7 rounded-md shadow-md">
           <h2 className="text-3xl font-semibold text-gray-900">
@@ -82,6 +87,7 @@ function App() {
             meetingsData={meetings}
             IconEdit={BsPencilSquare}
             IconDelete={BsTrash}
+            onEdit={handleEditItem}
             onDelete={handleDeleteItem}
           />
         </div>
