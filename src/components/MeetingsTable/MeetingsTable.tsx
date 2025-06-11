@@ -64,7 +64,7 @@ const MeetingsTable = ({
                 {meetingsData.map((meeting, idx: number) => (
                   <tr key={idx}>
                     <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">
-                      {idx}
+                      {idx + 1}
                     </td>
                     <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">
                       {meeting.title}
