@@ -15,8 +15,16 @@ import Menu from "./components/Menu/Menu";
 import MeetingsTable from "./components/MeetingsTable/MeetingsTable";
 import "./App.css";
 
+export interface Meeting {
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  level: string;
+}
+
 function App() {
-  const meetingsData = [
+  const meetingsData: Meeting[] = [
     {
       title: "Sprint Planning",
       description: "Outline tasks for the upcoming sprint.",

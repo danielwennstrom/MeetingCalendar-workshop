@@ -1,13 +1,8 @@
 import type { IconType } from "react-icons";
+import type { Meeting } from "../../App";
 
 type TableProps = {
-  meetingsData: {
-    title: string;
-    description: string;
-    date: string;
-    time: string;
-    level: string;
-  }[];
+  meetingsData: Meeting[];
   IconEdit: IconType;
   IconDelete: IconType;
   onDelete: (idx: number) => void;
