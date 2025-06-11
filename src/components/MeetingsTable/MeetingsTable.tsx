@@ -1,5 +1,5 @@
 import type { IconType } from "react-icons";
-import type { Meeting } from "../../App";
+import type { Meeting } from "../../types/Meeting";
 
 type TableProps = {
   meetingsData: Meeting[];

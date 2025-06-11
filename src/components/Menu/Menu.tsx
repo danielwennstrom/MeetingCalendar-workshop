@@ -15,7 +15,7 @@ type MenuProps = {
 
 const Menu = ({ items, activeIndex, onSelect }: MenuProps) => {
   return (
-    <div className="sm:w-1/3 w-2/4 h-fit bg-white rounded-md shadow-md">
+    <div className="w-auto lg:w-1/4 my-5 lg:my-0 mx-0 lg:mr-5 h-fit bg-white rounded-md shadow-md">
       {items.map((item, idx) => (
         <MenuItem
           key={item.label}
