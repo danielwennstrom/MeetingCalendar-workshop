@@ -18,11 +18,19 @@ function CreateMeetingForm({ onSave, onEdit, onClose, editing, isModal }: Props)
     defaultValues: editing,
   });
 
-  const onSubmit = (data: Meeting) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = (data: any) => {
+    const combinedDateTime = new Date(`${data.date}T${data.time}`);
+
+    const meeting: Meeting = {
+      ...data,
+      dateTime: combinedDateTime.toISOString(), 
+    };
+
     if (!isModal && onSave !== undefined) {
-      onSave(data);
+      onSave(meeting);
     } else if (onEdit != null) {
-      onEdit(data);
+      onEdit(meeting);
     }
   };
 

@@ -108,10 +108,10 @@ const MeetingsTable = ({
                     </td>
 
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
-                      {meeting.date}
+                      {meeting.dateTime.toLocaleDateString()}
                     </td>
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
-                      {meeting.time}
+                      {meeting.dateTime.toLocaleTimeString()}
                     </td>
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {capitalize(meeting.level)}

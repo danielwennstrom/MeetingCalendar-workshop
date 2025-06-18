@@ -35,12 +35,16 @@ function App() {
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [meetings, setMeetings] = useState([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
 
   const fetchMeetings = async () => {
     try {
       const response = await api.get("/meetings");
-      setMeetings(response.data);
+      const meetings: Meeting[] = response.data.map((meeting: Meeting) => ({
+        ...meeting,
+        dateTime: new Date(meeting.dateTime),
+      }));
+      setMeetings(meetings);
     } catch (error) {
       console.error("Error fetching meetings:", error);
     }

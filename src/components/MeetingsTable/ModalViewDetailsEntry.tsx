@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function ModalViewDetailsEntry({ meeting, onClose }: Props) {
-  const [open, setOpen] = useState(true);
+  const [open] = useState(true);
 
   return (
     <Dialog open={open} onClose={onClose} className="relative z-10">
@@ -60,7 +60,7 @@ export default function ModalViewDetailsEntry({ meeting, onClose }: Props) {
                             Date and time
                           </dt>
                           <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {meeting.date} at {meeting.time}
+                            {meeting.dateTime.toLocaleDateString()} at {meeting.dateTime.toLocaleTimeString()}
                           </dd>
                         </div>
                         <div className="bg-white px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3">
