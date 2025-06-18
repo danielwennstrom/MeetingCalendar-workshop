@@ -3,6 +3,7 @@ import type { Meeting } from "../../types/Meeting";
 import { useState } from "react";
 import ModalEditEntry from "./ModalEditEntry";
 import ModalViewDetailsEntry from "./ModalViewDetailsEntry";
+import capitalize from "../../utils/capitalize";
 
 type TableProps = {
   meetingsData: Meeting[];
@@ -62,25 +63,25 @@ const MeetingsTable = ({
                     scope="col"
                     className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                   >
-                    Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
                     Title
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Email
+                    Date
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Role
+                    Time
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Level
                   </th>
                   <th
                     scope="col"
@@ -113,7 +114,7 @@ const MeetingsTable = ({
                       {meeting.time}
                     </td>
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
-                      {meeting.level}
+                      {capitalize(meeting.level)}
                     </td>
                     <td className="py-4 text-sm whitespace-nowrap text-gray-900 space-x-2">
                       <button

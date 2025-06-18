@@ -1,9 +1,9 @@
 import { useState } from "react";
+import capitalize from "../../utils/capitalize";
 import {
   Dialog,
   DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
+  DialogPanel
 } from "@headlessui/react";
 import type { Meeting } from "../../types/Meeting";
 
@@ -38,7 +38,7 @@ export default function ModalViewDetailsEntry({ meeting, onClose }: Props) {
                       </h3>
                     </div>
                     <div className="mt-6 border-t border-gray-100">
-                      <dl className="divide-y divide-gray-100">
+                      <dl className="divide-y divide-gray-100 border-b border-gray-100 py-5">
                         <div className="bg-gray-50 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3">
                           <dt className="text-sm/6 font-medium text-gray-900">
                             Title
@@ -68,7 +68,7 @@ export default function ModalViewDetailsEntry({ meeting, onClose }: Props) {
                             Level
                           </dt>
                           <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {meeting.level}
+                            {capitalize(meeting.level)}
                           </dd>
                         </div>
                         <div className="bg-gray-50 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3">
