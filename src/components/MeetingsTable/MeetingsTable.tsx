@@ -2,6 +2,7 @@ import type { IconType } from "react-icons";
 import type { Meeting } from "../../types/Meeting";
 import { useState } from "react";
 import ModalEditEntry from "./ModalEditEntry";
+import ModalViewDetailsEntry from "./ModalViewDetailsEntry";
 
 type TableProps = {
   meetingsData: Meeting[];
@@ -16,22 +17,31 @@ const MeetingsTable = ({
   IconEdit,
   IconDelete,
   onDelete,
-  onEdit
+  onEdit,
 }: TableProps) => {
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
+  const [viewingIdx, setViewingIdx] = useState<number | null>(null);
 
   function handleEditItem(idx: number) {
     setEditingIdx(idx);
   }
 
-  function closeModal() {
+  function handleViewItem(idx: number) {
+    setViewingIdx(idx);
+  }
+
+  function closeEditModal() {
     setEditingIdx(null);
+  }
+
+  function closeViewModal() {
+    setViewingIdx(null);
   }
 
   function handleSaveItem(meeting: Meeting) {
     onEdit(meeting);
-    
-    closeModal();
+
+    closeEditModal();
   }
 
   return (
@@ -87,8 +97,15 @@ const MeetingsTable = ({
                       {idx + 1}
                     </td>
                     <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">
-                      {meeting.title}
+                      <button
+                        type="button"
+                        onClick={() => handleViewItem(idx)}
+                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                      >
+                        {meeting.title}
+                      </button>
                     </td>
+
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-900">
                       {meeting.date}
                     </td>
@@ -124,9 +141,16 @@ const MeetingsTable = ({
                 meeting={meetingsData[editingIdx]}
                 onEdit={(updatedMeeting: Meeting) => {
                   handleSaveItem(updatedMeeting);
-                  closeModal();
+                  closeEditModal();
                 }}
-                onClose={closeModal}
+                onClose={closeEditModal}
+              />
+            )}
+
+            {viewingIdx != null && meetingsData[viewingIdx] && (
+              <ModalViewDetailsEntry
+                meeting={meetingsData[viewingIdx]}
+                onClose={closeViewModal}
               />
             )}
           </div>
