@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BsCalendar2,
   BsCalendar2Fill,
@@ -15,21 +15,10 @@ import Menu from "./components/Menu/Menu";
 import MeetingsTable from "./components/MeetingsTable/MeetingsTable";
 import "./App.css";
 import type { Meeting } from "./types/Meeting";
+import api from "./services/api";
 import CreateMeetingForm from "./components/CreateMeeting/CreateMeetingForm";
 
 function App() {
-  const meetingsData: Meeting[] = [
-    {
-      id: 1,
-      title: "Sprint Planning",
-      description: "Outline tasks for the upcoming sprint.",
-      date: "2023-11-02",
-      time: "10:00",
-      level: "Development",
-      participants: "All team members",
-    },
-  ];
-
   const menuItems = [
     { label: "Dashboard", IconActive: BsGrid, IconInactive: BsGridFill },
     {
@@ -46,26 +35,46 @@ function App() {
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [meetings, setMeetings] = useState(meetingsData);
+  const [meetings, setMeetings] = useState([]);
 
-  function handleSaveItem(meeting: Meeting) {
-    const newMeetings = [...meetings];
-    newMeetings.push(meeting);
-    
-    setMeetings(newMeetings);
+  const fetchMeetings = async () => {
+    try {
+      const response = await api.get("/meetings");
+      setMeetings(response.data);
+    } catch (error) {
+      console.error("Error fetching meetings:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMeetings();
+  }, []);
+
+  async function handleSaveItem(meeting: Meeting) {
+    try {
+      await api.post("/meetings", meeting);
+      await fetchMeetings();
+    } catch (error) {
+      console.error("Failed to save meeting:", error);
+    }
   }
 
-  function handleDeleteItem(idx: number) {
-    const newMeetings = [...meetings];
-    newMeetings.splice(idx, 1);
-
-    setMeetings(newMeetings);
+  async function handleDeleteItem(idx: number) {
+    try {
+      await api.delete(`/meetings/${idx}`);
+      await fetchMeetings();
+    } catch (error) {
+      console.error("Failed to delete meeting:", error);
+    }
   }
 
-  function handleEditItem(updatedMeeting: Meeting) {
-    const newMeetings = meetings.map((m) => (m.id === updatedMeeting.id ? updatedMeeting : m));
-    
-    setMeetings(newMeetings);
+  async function handleEditItem(updatedMeeting: Meeting) {
+    try {
+      await api.put(`/meetings/${updatedMeeting.id}`, updatedMeeting);
+      await fetchMeetings();
+    } catch (error) {
+      console.error("Failed to update meeting:", error);
+    }
   }
 
   return (

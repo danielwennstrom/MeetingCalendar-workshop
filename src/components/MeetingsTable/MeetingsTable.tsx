@@ -82,7 +82,7 @@ const MeetingsTable = ({
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {meetingsData.map((meeting, idx: number) => (
-                  <tr key={idx}>
+                  <tr key={meeting.id}>
                     <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">
                       {idx + 1}
                     </td>
@@ -109,7 +109,7 @@ const MeetingsTable = ({
                       <button
                         type="button"
                         className="rounded-sm bg-red-500 px-2 py-2 text-s font-semibold text-white shadow-xs hover:bg-red-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={() => onDelete(idx)}
+                        onClick={() => onDelete(meeting.id)}
                       >
                         <IconDelete />
                       </button>
