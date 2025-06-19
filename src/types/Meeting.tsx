@@ -1,8 +1,10 @@
+import type { MeetingLevel } from "../enums/MeetingLevel";
+
 export interface Meeting {
   id: number;
   title: string;
   description: string;
   dateTime: Date;
-  level: string;
+  level: MeetingLevel;
   participants: string;
 }
