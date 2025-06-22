@@ -1,5 +1,5 @@
-export const enum MeetingLevel {
-  "TEAM",
-  "DEVELOPMENT",
-  "GENERAL",
+export enum MeetingLevel {
+  TEAM = "TEAM",
+  DEVELOPMENT = "DEVELOPMENT",
+  GENERAL = "GENERAL",
 }
