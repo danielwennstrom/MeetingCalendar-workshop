@@ -1,12 +1,33 @@
 import React from "react";
+import { useAuth } from "../../context/AuthContextProvider";
 
 function Navbar() {
+  const { user, logout } = useAuth();
+  console.log("User in navbar:", user);
+
   return (
-    <nav className="sm:flex space-x-6 py-3 px-5 sm:text-center text-white bg-black">
-      <h5 className="">Home</h5>
-      <h5 className="">About</h5>
-      <h5 className="">Services</h5>
-      <h5 className="">Contact</h5>
+    <nav className="text-white bg-black px-5">
+      <div className="sm:flex space-x-6 items-center my-3">
+        <h5>Home</h5>
+        <h5>About</h5>
+        <h5>Services</h5>
+        <h5>Contact</h5>
+        <div className="flex-grow text-right">
+          {!user && (
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition">
+              Login
+            </button>
+          )}
+          {user && (
+            <button
+              onClick={logout}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition"
+            >
+              Logout
+            </button>
+          )}
+        </div>
+      </div>
     </nav>
   );
 }

@@ -5,6 +5,7 @@ import api from "../services/api";
 interface AuthContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,8 +40,15 @@ export const AuthContextProvider = ({
     }
     fetchUser();
   }, []);
+
+  const logout = () => {
+    localStorage.removeItem("access_token");
+    setUser(null);
+    window.location.href = "/login";
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
