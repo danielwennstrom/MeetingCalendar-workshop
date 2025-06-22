@@ -76,7 +76,7 @@ export default function ModalViewDetailsEntry({ meeting, onClose }: Props) {
                             Participants
                           </dt>
                           <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {meeting.participants}
+                            {meeting.participants.map((user) => user.profile.name).join(", ")}
                           </dd>
                         </div>
                       </dl>

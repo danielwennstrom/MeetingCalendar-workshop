@@ -7,6 +7,7 @@ export interface Meeting {
   description: string;
   dateTime: Date;
   level: MeetingLevel;
-  creator: User
+  creator: User;
+  participants: User[];
   participantIds: number[];
 }
