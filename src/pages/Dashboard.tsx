@@ -93,7 +93,6 @@ function Dashboard() {
 
       <div className="flex flex-col lg:w-screen">
         <CreateMeetingForm onSave={handleSaveItem} />
-        <p>Hello {user.user?.username}!</p>
         <div className="bg-white justify-center px-5 py-3 my-7 rounded-md shadow-md">
           <h2 className="text-3xl font-semibold text-gray-900">
             List of Created Meetings
