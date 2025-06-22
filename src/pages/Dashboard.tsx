@@ -17,7 +17,6 @@ import MeetingsTable from "../components/MeetingsTable/MeetingsTable";
 import "../App.css";
 import type { Meeting } from "../types/Meeting";
 import api from "../services/api";
-import { useAuth } from "../context/AuthContextProvider";
 
 function Dashboard() {
   const menuItems = [

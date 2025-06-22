@@ -1,5 +1,4 @@
 import Select, { components } from "react-select";
-import type { User } from "../../types/User";
 import { useAuth } from "../../context/AuthContextProvider";
 
 type Props = {
