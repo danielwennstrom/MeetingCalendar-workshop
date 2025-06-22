@@ -4,6 +4,7 @@ import ParticipantSelect from "../react-select/ParticipantSelect";
 import api from "../../services/api";
 import type { User } from "../../types/User";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContextProvider";
 
 type Props = {
   onSave?: (meeting: Meeting) => void;
@@ -11,7 +12,6 @@ type Props = {
   onEdit?: (meeting: Meeting) => void;
   onClose?: () => void;
   isModal?: boolean;
-  currentUser?: User | null;
 };
 
 function CreateMeetingForm({
@@ -19,8 +19,7 @@ function CreateMeetingForm({
   onEdit,
   onClose,
   editing,
-  isModal,
-  currentUser,
+  isModal
 }: Props) {
   const {
     control,
@@ -49,6 +48,8 @@ function CreateMeetingForm({
   };
 
   const [users, setUsers] = useState<User[]>([]);
+  const fetchtUser = useAuth();
+  const currentUser = fetchtUser.user
 
   useEffect(() => {
     async function fetchUsers() {
@@ -182,7 +183,7 @@ function CreateMeetingForm({
                     <div className="sm:col-span-12">
                       <label
                         htmlFor="participantsIds"
-                        className="block text-sm/6 font-medium text-gray-900"
+                        className="block text-sm/6 font-medium text-gray-900 mb-2"
                       >
                         Participants
                       </label>
@@ -230,6 +231,7 @@ function CreateMeetingForm({
                                 }}
                                 onBlur={field.onBlur}
                                 isMulti
+                                currentUser={currentUser}
                               />
                               {errors.participantIds && (
                                 <span className="text-red-500">

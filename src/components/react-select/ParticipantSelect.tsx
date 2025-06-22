@@ -1,5 +1,6 @@
 import Select, { components } from "react-select";
 import type { User } from "../../types/User";
+import { useAuth } from "../../context/AuthContextProvider";
 
 type Props = {
   options: any;
@@ -16,28 +17,45 @@ const CustomMultiValue = (props) => {
 };
 
 const CustomOption = (props) => {
-  const { data, innerRef, innerProps, isFocused, isSelected } = props;
+  const { data, innerRef, innerProps } = props;
+  const fetchtUser = useAuth();
+  const currentUser = fetchtUser.user;
 
   return (
     <div
       ref={innerRef}
       {...innerProps}
-      style={{
-        backgroundColor: isFocused ? "#eee" : "white",
-        padding: 10,
-        display: "flex",
-        alignItems: "center",
-        cursor: "pointer",
-      }}
+      className="transition-colors flex text-center items-center p-2 bg-white hover:bg-gray-100"
     >
-      {/* <img
-        src={data.user.profile.avatarUrl}
-        alt={data.label}
-        style={{ width: 30, height: 30, borderRadius: "50%", marginRight: 10 }}
-      /> */}
+      {/* {data.user.profile.avatarUrl && (
+        <img
+          src={data.user.profile.avatarUrl}
+          alt={data.label}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: "50%",
+            marginRight: 10,
+          }}
+        />
+      )} */}
+      {data.user.profile.avatarUrl && (
+        <img
+          src="https://placehold.co/30"
+          alt={data.label}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: "50%",
+            marginRight: 10,
+          }}
+        />
+      )}
       <div>
-        <div>{data.label}</div>
-        <div style={{ fontSize: 12, color: "#666" }}>{data.user.email}</div>
+        <div>
+          {data.label}
+          {data.user.id == currentUser?.id && <span className="text-gray-600"> (you)</span>}
+        </div>
       </div>
     </div>
   );
