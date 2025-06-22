@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "../../context/AuthContextProvider";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
