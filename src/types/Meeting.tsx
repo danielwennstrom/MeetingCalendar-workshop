@@ -8,5 +8,5 @@ export interface Meeting {
   dateTime: Date;
   level: MeetingLevel;
   creator: User
-  participantsIds: number[];
+  participantIds: number[];
 }

@@ -37,7 +37,7 @@ function Dashboard() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
-  const user = useAuth();
+  const currentUser = useAuth();
 
   const fetchMeetings = async () => {
     try {
@@ -92,7 +92,7 @@ function Dashboard() {
       />
 
       <div className="flex flex-col lg:w-screen">
-        <CreateMeetingForm onSave={handleSaveItem} />
+        <CreateMeetingForm onSave={handleSaveItem} currentUser={currentUser.user} />
         <div className="bg-white justify-center px-5 py-3 my-7 rounded-md shadow-md">
           <h2 className="text-3xl font-semibold text-gray-900">
             List of Created Meetings

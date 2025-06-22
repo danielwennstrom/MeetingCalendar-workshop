@@ -1,5 +1,9 @@
 import type { Meeting } from "../../types/Meeting";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import ParticipantSelect from "../react-select/ParticipantSelect";
+import api from "../../services/api";
+import type { User } from "../../types/User";
+import { useEffect, useState } from "react";
 
 type Props = {
   onSave?: (meeting: Meeting) => void;
@@ -7,10 +11,19 @@ type Props = {
   onEdit?: (meeting: Meeting) => void;
   onClose?: () => void;
   isModal?: boolean;
+  currentUser?: User | null;
 };
 
-function CreateMeetingForm({ onSave, onEdit, onClose, editing, isModal }: Props) {
+function CreateMeetingForm({
+  onSave,
+  onEdit,
+  onClose,
+  editing,
+  isModal,
+  currentUser,
+}: Props) {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -21,10 +34,11 @@ function CreateMeetingForm({ onSave, onEdit, onClose, editing, isModal }: Props)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (data: any) => {
     const combinedDateTime = new Date(`${data.date}T${data.time}`);
+    console.log(data);
 
     const meeting: Meeting = {
       ...data,
-      dateTime: combinedDateTime.toISOString(), 
+      dateTime: combinedDateTime.toISOString(),
     };
 
     if (!isModal && onSave !== undefined) {
@@ -33,6 +47,21 @@ function CreateMeetingForm({ onSave, onEdit, onClose, editing, isModal }: Props)
       onEdit(meeting);
     }
   };
+
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const response = await api.get(`/user`);
+        setUsers(response.data);
+      } catch (e) {
+        console.log(e);
+        setUsers([]);
+      }
+    }
+    fetchUsers();
+  }, []);
 
   return (
     <div className="w-full flex flex-col">
@@ -152,23 +181,65 @@ function CreateMeetingForm({ onSave, onEdit, onClose, editing, isModal }: Props)
 
                     <div className="sm:col-span-12">
                       <label
-                        htmlFor="participants"
+                        htmlFor="participantsIds"
                         className="block text-sm/6 font-medium text-gray-900"
                       >
                         Participants
                       </label>
-                      <div className="mt-2 grid grid-cols-1">
-                        <input
-                          id="participants"
-                          type="text"
-                          placeholder="Enter participant emails"
-                          {...register("participants", { required: true })}
-                          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                        />
-                        {errors.title && (
-                          <span className="text-red-500">Required field</span>
-                        )}
-                      </div>
+                      <Controller
+                        name="participantIds"
+                        control={control}
+                        rules={{
+                          validate: (value) =>
+                            value && value.length > 0
+                              ? true
+                              : "Select at least one participant",
+                        }}
+                        render={({ field }) => {
+                          let transformedOptions = users.map((user) => ({
+                            value: user.id,
+                            label: user.profile.name,
+                            user,
+                          }));
+
+                          if (currentUser?.id !== undefined) {
+                            transformedOptions = [
+                              ...transformedOptions.filter(
+                                (opt) => opt.value === currentUser.id
+                              ),
+                              ...transformedOptions.filter(
+                                (opt) => opt.value !== currentUser.id
+                              ),
+                            ];
+                          }
+
+                          const selectedOptions = transformedOptions.filter(
+                            (opt) => field.value?.includes(opt.value)
+                          );
+
+                          return (
+                            <>
+                              <ParticipantSelect
+                                options={transformedOptions}
+                                value={selectedOptions}
+                                onChange={(selectedOptions) => {
+                                  const ids = selectedOptions
+                                    ? selectedOptions.map((opt) => opt.value)
+                                    : [];
+                                  field.onChange(ids);
+                                }}
+                                onBlur={field.onBlur}
+                                isMulti
+                              />
+                              {errors.participantIds && (
+                                <span className="text-red-500">
+                                  {errors.participantIds.message}
+                                </span>
+                              )}
+                            </>
+                          );
+                        }}
+                      />
                     </div>
 
                     <div className="col-span-full">
