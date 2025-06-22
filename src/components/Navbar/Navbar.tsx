@@ -3,7 +3,6 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 function Navbar() {
   const { user, logout } = useAuth();
-  console.log("User in navbar:", user);
 
   return (
     <nav className="text-white bg-black px-5">
