@@ -8,6 +8,8 @@ import SignupForm from "./pages/Auth/SignupForm";
 import { AuthContextProvider } from "./context/AuthContextProvider";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import Meetings from "./pages/Meetings";
+import Calendar from "./pages/Calendar";
 
 function App() {
   return (
@@ -26,6 +28,9 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                   <Route element={<AuthLayout />}>
                     <Route path="/" element={<Dashboard />} />
+                    {/* <Route path="/users" element={<Dashboard />} /> */}
+                    <Route path="/meetings" element={<Meetings />} />
+                    <Route path="/calendar" element={<Calendar />} />
                   </Route>
                 </Route>
               </Routes>

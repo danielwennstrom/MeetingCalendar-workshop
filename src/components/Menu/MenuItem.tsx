@@ -5,6 +5,7 @@ type MenuItemProps = {
   IconActive: IconType;
   IconInactive: IconType;
   label: string;
+  href: string;
   isActive?: boolean;
   onClick?: () => void;
   isLast?: boolean;

@@ -1,6 +1,7 @@
 import MenuItem from "./MenuItem";
 import type { IconType } from "react-icons";
 import { getRole } from "../../utils/jwtUtils";
+import { useNavigate } from "react-router-dom";
 
 type MenuItemData = {
   label: string;
@@ -18,6 +19,7 @@ type MenuProps = {
 
 const Menu = ({ items, activeIndex, onSelect }: MenuProps) => {
   const role = getRole();
+  const navigate = useNavigate();
 
   return (
     <div className="w-auto lg:w-1/4 my-5 lg:my-0 mx-0 lg:mr-5 h-fit bg-white rounded-md shadow-md">
@@ -35,7 +37,11 @@ const Menu = ({ items, activeIndex, onSelect }: MenuProps) => {
             label={item.label}
             isActive={idx === activeIndex}
             isLast={idx === items.length - 1}
-            onClick={() => onSelect(idx)}
+            href={item.href}
+            onClick={() => {
+              onSelect(idx);
+              navigate(item.href);
+            }}
           />
         );
       })}
