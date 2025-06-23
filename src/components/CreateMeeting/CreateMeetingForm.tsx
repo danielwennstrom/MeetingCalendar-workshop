@@ -170,9 +170,9 @@ function CreateMeetingForm({
                           {...register("level", { required: true })}
                           className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         >
-                          <option>Team</option>
-                          <option>Development</option>
-                          <option>General</option>
+                          <option value="TEAM">Team</option>
+                          <option value="DEVELOPMENT">Development</option>
+                          <option value="GENERAL">General</option>
                         </select>
                         {errors.title && (
                           <span className="text-red-500">Required field</span>
