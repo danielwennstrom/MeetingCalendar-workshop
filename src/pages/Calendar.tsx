@@ -15,6 +15,7 @@ import {
   eachDayOfInterval,
   format,
   getMonth,
+  getYear,
   isSameDay,
   parseISO,
 } from "date-fns";
@@ -22,148 +23,30 @@ import api from "../services/api";
 import { useAuth } from "../context/AuthContextProvider";
 import type { Meeting } from "../types/Meeting";
 
-interface SelectedMonth {
+interface CalendarDay {
   date: string;
   meetings: Meeting[];
   isCurrentMonth: boolean;
   isToday: boolean;
+  isSelected: boolean;
 }
-
-const days = [
-  { date: "2021-12-27", events: [] },
-  { date: "2021-12-28", events: [] },
-  { date: "2021-12-29", events: [] },
-  { date: "2021-12-30", events: [] },
-  { date: "2021-12-31", events: [] },
-  { date: "2022-01-01", isCurrentMonth: true, events: [] },
-  { date: "2022-01-02", isCurrentMonth: true, events: [] },
-  {
-    date: "2022-01-03",
-    isCurrentMonth: true,
-    events: [
-      {
-        id: 1,
-        name: "Design review",
-        time: "10AM",
-        datetime: "2022-01-03T10:00",
-        href: "#",
-      },
-      {
-        id: 2,
-        name: "Sales meeting",
-        time: "2PM",
-        datetime: "2022-01-03T14:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-01-04", isCurrentMonth: true, events: [] },
-  { date: "2022-01-05", isCurrentMonth: true, events: [] },
-  { date: "2022-01-06", isCurrentMonth: true, events: [] },
-  {
-    date: "2022-01-07",
-    isCurrentMonth: true,
-    events: [
-      {
-        id: 3,
-        name: "Date night",
-        time: "6PM",
-        datetime: "2022-01-08T18:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-01-08", isCurrentMonth: true, events: [] },
-  { date: "2022-01-09", isCurrentMonth: true, events: [] },
-  { date: "2022-01-10", isCurrentMonth: true, events: [] },
-  { date: "2022-01-11", isCurrentMonth: true, events: [] },
-  {
-    date: "2022-01-12",
-    isCurrentMonth: true,
-    isToday: true,
-    events: [
-      {
-        id: 6,
-        name: "Sam's birthday party",
-        time: "2PM",
-        datetime: "2022-01-25T14:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-01-13", isCurrentMonth: true, events: [] },
-  { date: "2022-01-14", isCurrentMonth: true, events: [] },
-  { date: "2022-01-15", isCurrentMonth: true, events: [] },
-  { date: "2022-01-16", isCurrentMonth: true, events: [] },
-  { date: "2022-01-17", isCurrentMonth: true, events: [] },
-  { date: "2022-01-18", isCurrentMonth: true, events: [] },
-  { date: "2022-01-19", isCurrentMonth: true, events: [] },
-  { date: "2022-01-20", isCurrentMonth: true, events: [] },
-  { date: "2022-01-21", isCurrentMonth: true, events: [] },
-  {
-    date: "2022-01-22",
-    isCurrentMonth: true,
-    isSelected: true,
-    events: [
-      {
-        id: 4,
-        name: "Maple syrup museum",
-        time: "3PM",
-        datetime: "2022-01-22T15:00",
-        href: "#",
-      },
-      {
-        id: 5,
-        name: "Hockey game",
-        time: "7PM",
-        datetime: "2022-01-22T19:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-01-23", isCurrentMonth: true, events: [] },
-  { date: "2022-01-24", isCurrentMonth: true, events: [] },
-  { date: "2022-01-25", isCurrentMonth: true, events: [] },
-  { date: "2022-01-26", isCurrentMonth: true, events: [] },
-  { date: "2022-01-27", isCurrentMonth: true, events: [] },
-  { date: "2022-01-28", isCurrentMonth: true, events: [] },
-  { date: "2022-01-29", isCurrentMonth: true, events: [] },
-  { date: "2022-01-30", isCurrentMonth: true, events: [] },
-  { date: "2022-01-31", isCurrentMonth: true, events: [] },
-  { date: "2022-02-01", events: [] },
-  { date: "2022-02-02", events: [] },
-  { date: "2022-02-03", events: [] },
-  {
-    date: "2022-02-04",
-    events: [
-      {
-        id: 7,
-        name: "Cinema with friends",
-        time: "9PM",
-        datetime: "2022-02-04T21:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-02-05", events: [] },
-  { date: "2022-02-06", events: [] },
-];
-const selectedDay = days.find((day) => day.isSelected);
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
-  const [daysTemp, setDaysTemp] = useState<SelectedMonth[]>([]);
+export default function Calendar() {
+  const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
+  const [selectedDay, setSelectedDay] = useState<CalendarDay>();
   const { user } = useAuth();
 
   const fetchMeetings = useCallback(
     async (start, end) => {
       const response = await api.get("/meetings/search", {
         params: {
-          dateTime: new Date(start).toISOString(),
-          dateTimeBefore: new Date(end).toISOString(),
+          dateTime: start.toISOString(),
+          dateTimeBefore: end.toISOString(),
           participantIds: user?.id ? [user.id] : [],
         },
         paramsSerializer: (params) => {
@@ -178,20 +61,21 @@ export default function Example() {
 
   useEffect(() => {
     const today = new Date();
-    const start = startOfWeek(startOfMonth(today), { weekStartsOn: 1 });
-    const end = endOfWeek(endOfMonth(today), { weekStartsOn: 1 });
+    const start = startOfWeek(startOfMonth(visibleMonth), { weekStartsOn: 1 });
+    const end = endOfWeek(endOfMonth(visibleMonth), { weekStartsOn: 1 });
 
-    const datesArray: SelectedMonth[] = eachDayOfInterval({ start, end }).map(
+    const datesArray: CalendarDay[] = eachDayOfInterval({ start, end }).map(
       (day) => ({
         date: format(day, "yyyy-MM-dd"),
         isCurrentMonth: getMonth(day) === getMonth(today),
         isToday: isSameDay(day, today),
+        isSelected: isSameDay(day, today),
         meetings: [],
       })
     );
 
     const updatedArray = datesArray;
-    setDaysTemp(updatedArray);
+    setCalendarDays(updatedArray);
 
     fetchMeetings(start, end).then((meetings) => {
       const merged = updatedArray.map((day) => ({
@@ -201,20 +85,45 @@ export default function Example() {
         ),
       }));
 
-      setDaysTemp(merged);
+      setCalendarDays(merged);
     });
-  }, [user?.id, fetchMeetings]);
+  }, [user?.id, fetchMeetings, visibleMonth]);
+
+  function handlePreviousMonth() {
+    setVisibleMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+    );
+  }
+
+  function handleNextMonth() {
+    setVisibleMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+    );
+  }
+
+  function handleSelectedDay(selectedDay: CalendarDay): void {
+    const updated = calendarDays.map((day) => ({
+      ...day,
+      isSelected: day.date === selectedDay.date,
+    }));
+
+    setCalendarDays(updated);
+    setSelectedDay(selectedDay);
+  }
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col flex-grow min-h-screen">
       <header className="flex items-center justify-between border-b border-gray-200 px-6 lg:flex-none">
         <h1 className="text-base font-semibold text-gray-900">
-          <time dateTime="2025-06">June 2025</time>
+          <time dateTime="2025-06">
+            {format(visibleMonth, "LLLL")} {getYear(visibleMonth)}
+          </time>
         </h1>
         <div className="flex items-center">
           <div className="relative flex items-center rounded-md bg-white shadow-xs md:items-stretch">
             <button
               type="button"
+              onClick={() => handlePreviousMonth()}
               className="flex h-9 w-12 items-center justify-center rounded-l-md border-y border-l border-gray-300 pr-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pr-0 md:hover:bg-gray-50"
             >
               <span className="sr-only">Previous month</span>
@@ -224,11 +133,12 @@ export default function Example() {
               type="button"
               className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
             >
-              Today
+              {format(visibleMonth, "LLLL")}
             </button>
             <span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
             <button
               type="button"
+              onClick={() => handleNextMonth()}
               className="flex h-9 w-12 items-center justify-center rounded-r-md border-y border-r border-gray-300 pl-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pl-0 md:hover:bg-gray-50"
             >
               <span className="sr-only">Next month</span>
@@ -390,7 +300,7 @@ export default function Example() {
         </div>
         <div className="flex bg-gray-200 text-xs/6 text-gray-700 lg:flex-auto">
           <div className="hidden w-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
-            {daysTemp.map((day) => (
+            {calendarDays.map((day) => (
               <div
                 key={day.date}
                 className={classNames(
@@ -436,10 +346,11 @@ export default function Example() {
             ))}
           </div>
           <div className="isolate grid w-full grid-cols-7 grid-rows-6 gap-px lg:hidden">
-            {days.map((day) => (
+            {calendarDays.map((day) => (
               <button
                 key={day.date}
                 type="button"
+                onClick={() => handleSelectedDay(day)}
                 className={classNames(
                   day.isCurrentMonth ? "bg-white" : "bg-gray-50",
                   (day.isSelected || day.isToday) && "font-semibold",
@@ -468,12 +379,12 @@ export default function Example() {
                 >
                   {day.date.split("-").pop().replace(/^0/, "")}
                 </time>
-                <span className="sr-only">{day.events.length} events</span>
-                {day.events.length > 0 && (
+                <span className="sr-only">{day.meetings.length} events</span>
+                {day.meetings.length > 0 && (
                   <span className="-mx-0.5 mt-auto flex flex-wrap-reverse">
-                    {day.events.map((event) => (
+                    {day.meetings.map((meeting) => (
                       <span
-                        key={event.id}
+                        key={meeting.id}
                         className="mx-0.5 mb-1 size-1.5 rounded-full bg-gray-400"
                       />
                     ))}
@@ -484,32 +395,32 @@ export default function Example() {
           </div>
         </div>
       </div>
-      {selectedDay?.events.length > 0 && (
+      {selectedDay?.meetings.length > 0 && (
         <div className="px-4 py-10 sm:px-6 lg:hidden">
           <ol className="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white text-sm ring-1 shadow-sm ring-black/5">
-            {selectedDay.events.map((event) => (
+            {selectedDay.meetings.map((meeting) => (
               <li
-                key={event.id}
+                key={meeting.id}
                 className="group flex p-4 pr-6 focus-within:bg-gray-50 hover:bg-gray-50"
               >
                 <div className="flex-auto">
-                  <p className="font-semibold text-gray-900">{event.name}</p>
+                  <p className="font-semibold text-gray-900">{meeting.title}</p>
                   <time
-                    dateTime={event.datetime}
+                    dateTime={meeting.dateTime.toString()}
                     className="mt-2 flex items-center text-gray-700"
                   >
                     <ClockIcon
                       className="mr-2 size-5 text-gray-400"
                       aria-hidden="true"
                     />
-                    {event.time}
+                    {format(meeting.dateTime, "h a")}
                   </time>
                 </div>
                 <a
                   href={event.href}
                   className="ml-6 flex-none self-center rounded-md bg-white px-3 py-2 font-semibold text-gray-900 opacity-0 ring-1 shadow-xs ring-gray-300 ring-inset group-hover:opacity-100 hover:ring-gray-400 focus:opacity-100"
                 >
-                  Edit<span className="sr-only">, {event.name}</span>
+                  Edit<span className="sr-only">, {meeting.title}</span>
                 </a>
               </li>
             ))}
