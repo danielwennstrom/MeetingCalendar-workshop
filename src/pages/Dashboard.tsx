@@ -1,20 +1,28 @@
-import { useState, useEffect } from "react";
-import {
-  BsPencilSquare,
-  BsTrash,
-} from "react-icons/bs";
+import { useState, useEffect, useCallback } from "react";
+import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import CreateMeetingForm from "../components/CreateMeeting/CreateMeetingForm";
 import MeetingsTable from "../components/MeetingsTable/MeetingsTable";
 import "../App.css";
 import type { Meeting } from "../types/Meeting";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContextProvider";
 
 function Dashboard() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const { user } = useAuth();
 
-  const fetchMeetings = async () => {
+  const fetchMeetings = useCallback(async () => {
+    console.log(user?.id);
     try {
-      const response = await api.get("/meetings");
+      const response = await api.get("/meetings/search", {
+        params: {
+          dateTime: new Date().toISOString(),
+          participantIds: user?.id ? [user.id] : [],
+        },
+        paramsSerializer: (params) => {
+          return new URLSearchParams(params).toString();
+        },
+      });
       const meetings: Meeting[] = response.data.map((meeting: Meeting) => ({
         ...meeting,
         dateTime: new Date(meeting.dateTime),
@@ -23,11 +31,13 @@ function Dashboard() {
     } catch (error) {
       console.error("Error fetching meetings:", error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    fetchMeetings();
-  }, []);
+    if (user?.id) {
+      fetchMeetings();
+    }
+  }, [user?.id, fetchMeetings]);
 
   async function handleSaveItem(meeting: Meeting) {
     try {
@@ -61,7 +71,7 @@ function Dashboard() {
       <CreateMeetingForm onSave={handleSaveItem} />
       <div className="bg-white justify-center px-5 py-3 my-7 rounded-md shadow-md">
         <h2 className="text-3xl font-semibold text-gray-900">
-          List of Created Meetings
+          List of Upcoming Meetings
         </h2>
         <MeetingsTable
           meetingsData={meetings}
