@@ -30,8 +30,8 @@ function App() {
                 </Route>
               </Routes>
             </div>
+            <Footer />
           </main>
-          <Footer />
         </div>
       </Router>
     </AuthContextProvider>
