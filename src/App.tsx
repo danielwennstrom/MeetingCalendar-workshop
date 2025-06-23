@@ -16,7 +16,7 @@ function App() {
         <div className="flex flex-col min-h-screen">
           <Header />
           <main className="flex-grow bg-gray-300 overflow-auto">
-            <div className="max-w-10/12 mx-auto py-6 px-4">
+            <div className="max-w-10/12 mx-auto pt-7">
               <Routes>
                 <Route element={<PublicLayout />}>
                   <Route path="/login" element={<LoginForm />} />
