@@ -6,7 +6,7 @@ import {
   ClockIcon,
   EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   startOfMonth,
   endOfMonth,
@@ -16,13 +16,17 @@ import {
   format,
   getMonth,
   isSameDay,
+  parseISO,
 } from "date-fns";
+import api from "../services/api";
+import { useAuth } from "../context/AuthContextProvider";
+import type { Meeting } from "../types/Meeting";
 
 interface SelectedMonth {
-    date: string;
-    events: [];
-    isCurrentMonth: boolean;
-    isToday: boolean;
+  date: string;
+  meetings: Meeting[];
+  isCurrentMonth: boolean;
+  isToday: boolean;
 }
 
 const days = [
@@ -152,29 +156,60 @@ function classNames(...classes) {
 
 export default function Example() {
   const [daysTemp, setDaysTemp] = useState<SelectedMonth[]>([]);
+  const { user } = useAuth();
+
+  const fetchMeetings = useCallback(
+    async (start, end) => {
+      const response = await api.get("/meetings/search", {
+        params: {
+          dateTime: new Date(start).toISOString(),
+          dateTimeBefore: new Date(end).toISOString(),
+          participantIds: user?.id ? [user.id] : [],
+        },
+        paramsSerializer: (params) => {
+          return new URLSearchParams(params).toString();
+        },
+      });
+
+      return response.data;
+    },
+    [user?.id]
+  );
 
   useEffect(() => {
     const today = new Date();
     const start = startOfWeek(startOfMonth(today), { weekStartsOn: 1 });
     const end = endOfWeek(endOfMonth(today), { weekStartsOn: 1 });
 
-    const datesArray: SelectedMonth[] = eachDayOfInterval({ start, end }).map((day) => ({
+    const datesArray: SelectedMonth[] = eachDayOfInterval({ start, end }).map(
+      (day) => ({
         date: format(day, "yyyy-MM-dd"),
         isCurrentMonth: getMonth(day) === getMonth(today),
         isToday: isSameDay(day, today),
-        events: [],
-    }));
+        meetings: [],
+      })
+    );
 
-    setDaysTemp(datesArray);
-  }, []);
+    const updatedArray = datesArray;
+    setDaysTemp(updatedArray);
 
-  console.log(daysTemp);
+    fetchMeetings(start, end).then((meetings) => {
+      const merged = updatedArray.map((day) => ({
+        ...day,
+        meetings: meetings.filter((meeting) =>
+          isSameDay(parseISO(meeting.dateTime), parseISO(day.date))
+        ),
+      }));
+
+      setDaysTemp(merged);
+    });
+  }, [user?.id, fetchMeetings]);
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col flex-grow min-h-screen">
       <header className="flex items-center justify-between border-b border-gray-200 px-6 lg:flex-none">
         <h1 className="text-base font-semibold text-gray-900">
-          <time dateTime="2022-01">January 2022</time>
+          <time dateTime="2025-06">June 2025</time>
         </h1>
         <div className="flex items-center">
           <div className="relative flex items-center rounded-md bg-white shadow-xs md:items-stretch">
@@ -373,26 +408,26 @@ export default function Example() {
                 >
                   {day.date.split("-").pop().replace(/^0/, "")}
                 </time>
-                {day.events.length > 0 && (
+                {day.meetings.length > 0 && (
                   <ol className="mt-2">
-                    {day.events.slice(0, 2).map((event) => (
+                    {day.meetings.slice(0, 2).map((event) => (
                       <li key={event.id}>
                         <a href={event.href} className="group flex">
                           <p className="flex-auto truncate font-medium text-gray-900 group-hover:text-indigo-600">
-                            {event.name}
+                            {event.title}
                           </p>
                           <time
-                            dateTime={event.datetime}
+                            dateTime={format(event.dateTime, "h a")}
                             className="ml-3 hidden flex-none text-gray-500 group-hover:text-indigo-600 xl:block"
                           >
-                            {event.time}
+                            {format(event.dateTime, "h a")}
                           </time>
                         </a>
                       </li>
                     ))}
-                    {day.events.length > 2 && (
+                    {day.meetings.length > 2 && (
                       <li className="text-gray-500">
-                        + {day.events.length - 2} more
+                        + {day.meetings.length - 2} more
                       </li>
                     )}
                   </ol>
