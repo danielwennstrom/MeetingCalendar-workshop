@@ -3,6 +3,10 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 function Navbar() {
   const { user, logout } = useAuth();
+  const getFirstName = (name: string) => {
+    const names = name.split(" ");
+    return names[0];
+  }
 
   return (
     <nav className="text-white bg-black px-5">
@@ -21,7 +25,7 @@ function Navbar() {
             <Menu as="div" className="relative inline-block text-left">
               <div>
                 <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">
-                  Hello, {user.profile.name}!
+                  Hello, {getFirstName(user.profile.name)}!
                 </MenuButton>
               </div>
 
