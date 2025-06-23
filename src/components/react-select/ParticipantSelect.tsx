@@ -69,6 +69,7 @@ function ParticipantSelect({ options, value, onChange }: Props) {
       value={value}
       onChange={onChange}
       placeholder="Select participants..."
+      className="text-sm"
     />
   );
 }
