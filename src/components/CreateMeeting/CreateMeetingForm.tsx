@@ -5,6 +5,7 @@ import api from "../../services/api";
 import type { User } from "../../types/User";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContextProvider";
+import { isAdmin } from "../../utils/roleUtils";
 
 type Props = {
   onSave?: (meeting: Meeting) => void;
@@ -19,7 +20,7 @@ function CreateMeetingForm({
   onEdit,
   onClose,
   editing,
-  isModal
+  isModal,
 }: Props) {
   const {
     control,
@@ -48,8 +49,7 @@ function CreateMeetingForm({
   };
 
   const [users, setUsers] = useState<User[]>([]);
-  const fetchtUser = useAuth();
-  const currentUser = fetchtUser.user
+  const { user } = useAuth();
 
   useEffect(() => {
     async function fetchUsers() {
@@ -191,10 +191,16 @@ function CreateMeetingForm({
                         name="participantIds"
                         control={control}
                         rules={{
-                          validate: (value) =>
-                            value && value.length > 0
-                              ? true
-                              : "Select at least one participant",
+                          validate: (value) => {
+                            if (!value || value.length === 0) {
+                              return "Select at least one participant";
+                            }
+
+                            if (user != null && !value.includes(user.id) && !isAdmin()) {
+                              return "You must be included as a participant";
+                            }
+                            return true;
+                          },
                         }}
                         render={({ field }) => {
                           let transformedOptions = users.map((user) => ({
@@ -203,13 +209,13 @@ function CreateMeetingForm({
                             user,
                           }));
 
-                          if (currentUser?.id !== undefined) {
+                          if (user?.id !== undefined) {
                             transformedOptions = [
                               ...transformedOptions.filter(
-                                (opt) => opt.value === currentUser.id
+                                (opt) => opt.value === user.id
                               ),
                               ...transformedOptions.filter(
-                                (opt) => opt.value !== currentUser.id
+                                (opt) => opt.value !== user.id
                               ),
                             ];
                           }
@@ -231,7 +237,7 @@ function CreateMeetingForm({
                                 }}
                                 onBlur={field.onBlur}
                                 isMulti
-                                currentUser={currentUser}
+                                currentUser={user}
                               />
                               {errors.participantIds && (
                                 <span className="text-red-500">
