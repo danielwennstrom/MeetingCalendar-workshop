@@ -12,7 +12,13 @@ type Props = {
   isEditMode?: boolean;
 };
 
-function CreateUserForm({ editingData, onClose, isEditMode, onEdit }: Props) {
+function CreateUserForm({
+  editingData,
+  onClose,
+  isEditMode,
+  onEdit,
+  onRegister,
+}: Props) {
   const {
     register,
     handleSubmit,
@@ -20,22 +26,15 @@ function CreateUserForm({ editingData, onClose, isEditMode, onEdit }: Props) {
   } = useForm<UserAuthRegister>({ defaultValues: editingData });
 
   const onSubmit = async (data: UserAuthRegister) => {
-    try {
-      if (isEditMode && onEdit !== undefined) {
-        const updatedUser: User = {
-          ...editingData!,
-          ...data,
-        };
+    if (isEditMode && onEdit !== undefined) {
+      const updatedUser: User = {
+        ...editingData!,
+        ...data,
+      };
 
-        onEdit(updatedUser);
-      } else {
-        const response = await api.post("/auth/register", data);
-        const token = response.data;
-        localStorage.setItem("access_token", token);
-        window.location.href = "/";
-      }
-    } catch (error) {
-      console.error("Error signing up:", error);
+      onEdit(updatedUser);
+    } else if (!isEditMode && onRegister !== undefined) {
+      onRegister(data);
     }
   };
 
