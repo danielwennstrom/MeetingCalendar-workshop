@@ -8,6 +8,10 @@ function Navbar() {
     return names[0];
   }
 
+  const login = () => {
+    window.location.href = "/login";
+  }
+
   return (
     <nav className="text-white bg-black px-5">
       <div className="sm:flex space-x-6 items-center my-3">
@@ -17,7 +21,7 @@ function Navbar() {
         <h5>Contact</h5>
         <div className="flex-grow text-right">
           {!user && (
-            <button className="bg-white  hover:bg-gray-50 text-gray-900 font-medium px-4 py-2 rounded-md transition">
+            <button onClick={login} className="bg-white  hover:bg-gray-50 text-gray-900 font-medium px-4 py-2 rounded-md transition">
               Login
             </button>
           )}
