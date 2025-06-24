@@ -21,17 +21,10 @@ export default function AuthLayout() {
       href: "/",
     },
     {
-      label: "Meetings",
-      IconActive: BsClipboard2,
-      IconInactive: BsClipboard2Fill,
-      href: "/meetings",
-    },
-    {
       label: "Users",
       IconActive: BsPerson,
       IconInactive: BsPersonFill,
-      href: "/users",
-      requiredRole: "ROLE_ADMIN",
+      href: "/users"
     },
     {
       label: "Calendar",
