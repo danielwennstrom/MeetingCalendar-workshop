@@ -1,8 +1,11 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import type { UserAuthRegister } from "../../types/UserAuthRegister";
 import { useForm } from "react-hook-form";
 import type { User } from "../../types/User";
 import api from "../../services/api";
+import { isAdmin } from "../../utils/roleUtils";
+import { Switch } from "@headlessui/react";
+import { UserRole } from "../../enums/UserRole";
 
 type Props = {
   onEdit?: (editing: User) => void;
@@ -25,6 +28,14 @@ function CreateUserForm({
     formState: { errors },
   } = useForm<UserAuthRegister>({ defaultValues: editingData });
 
+  const [giveAdminRole, setGiveAdminRole] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (editingData?.role) {
+      setGiveAdminRole(editingData.role === UserRole.ADMIN);
+    }
+  }, [editingData]);
+
   const onSubmit = async (data: UserAuthRegister) => {
     if (isEditMode && onEdit !== undefined) {
       const updatedUser: User = {
@@ -32,12 +43,18 @@ function CreateUserForm({
         ...data,
       };
 
+      if (giveAdminRole) {
+        updatedUser.role = UserRole.ADMIN;
+      }
+
       onEdit(updatedUser);
     } else if (!isEditMode && onRegister !== undefined) {
       onRegister(data);
     }
   };
 
+  console.log(editingData);
+  console.log(giveAdminRole);
   const passwordPattern =
     /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
 
@@ -152,7 +169,55 @@ function CreateUserForm({
           )}
         </div>
       </div>
-
+      {isEditMode && isAdmin() && (
+        <>
+          <label
+            htmlFor="giveAdminRole"
+            className="block text-sm/6 font-medium text-gray-900"
+          >
+            Is Administrator
+          </label>
+          <Switch
+            checked={giveAdminRole}
+            onChange={setGiveAdminRole}
+            className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:outline-hidden data-checked:bg-indigo-600"
+          >
+            <span className="sr-only">Use setting</span>
+            <span className="pointer-events-none relative inline-block size-5 transform rounded-full bg-white ring-0 shadow-sm transition duration-200 ease-in-out group-data-checked:translate-x-5">
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 flex size-full items-center justify-center transition-opacity duration-200 ease-in group-data-checked:opacity-0 group-data-checked:duration-100 group-data-checked:ease-out"
+              >
+                <svg
+                  fill="none"
+                  viewBox="0 0 12 12"
+                  className="size-3 text-gray-400"
+                >
+                  <path
+                    d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 flex size-full items-center justify-center opacity-0 transition-opacity duration-100 ease-out group-data-checked:opacity-100 group-data-checked:duration-200 group-data-checked:ease-in"
+              >
+                <svg
+                  fill="currentColor"
+                  viewBox="0 0 12 12"
+                  className="size-3 text-indigo-600"
+                >
+                  <path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
+                </svg>
+              </span>
+            </span>
+          </Switch>
+        </>
+      )}
       {!isEditMode && (
         <div>
           <div className="flex items-center justify-between">
@@ -184,7 +249,7 @@ function CreateUserForm({
           </div>
         </div>
       )}
-      <div>
+      <div className="flex flex-grow space-x-6 justify-center">
         {isEditMode && (
           <button
             onClick={onClose}
@@ -195,7 +260,7 @@ function CreateUserForm({
         )}
         <button
           type="submit"
-          className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           {!isEditMode ? <span>Sign up</span> : <span>Update user</span>}
         </button>
