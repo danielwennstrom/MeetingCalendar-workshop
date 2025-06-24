@@ -32,7 +32,7 @@ const Menu = ({ items, onSelect }: MenuProps) => {
   const activeIndex = currentIndex === -1 ? 0 : currentIndex;
 
   return (
-    <div className="w-auto lg:w-1/4 my-5 lg:my-0 mx-0 lg:mr-5 h-fit bg-white rounded-md shadow-md">
+    <div className="w-auto my-5 lg:my-0 mx-0 lg:mr-5 h-fit bg-white rounded-md shadow-md">
       {items.map((item, idx) => {
         const canAccess = !item.requiredRole || item.requiredRole === role;
 

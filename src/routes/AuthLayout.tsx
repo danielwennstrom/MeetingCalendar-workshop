@@ -24,7 +24,7 @@ export default function AuthLayout() {
       label: "Users",
       IconActive: BsPerson,
       IconInactive: BsPersonFill,
-      href: "/users"
+      href: "/users",
     },
     {
       label: "Calendar",
@@ -37,11 +37,13 @@ export default function AuthLayout() {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
     <div className="flex flex-col lg:flex-row space-x-5 my-7">
-      <Menu
-        items={menuItems}
-        activeIndex={activeIndex}
-        onSelect={setActiveIndex}
-      />
+      <div className=" lg:min-w-1/4 lg:max-w-1/4">
+        <Menu
+          items={menuItems}
+          activeIndex={activeIndex}
+          onSelect={setActiveIndex}
+        />
+      </div>
       <Outlet />
     </div>
   );
