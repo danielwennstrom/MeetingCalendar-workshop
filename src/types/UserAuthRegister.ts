@@ -1,7 +1,5 @@
-import type { Profile } from "./Profile"
+import type { User } from "./User";
 
-export interface UserAuthRegister {
-    username: string;
+export interface UserAuthRegister extends User {
     password: string;
-    profile: Profile;
 }
