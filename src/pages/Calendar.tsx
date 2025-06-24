@@ -85,6 +85,10 @@ export default function Calendar() {
         ),
       }));
 
+      const selected = merged.find((day) =>
+        isSameDay(parseISO(day.date), today)
+      );
+      setSelectedDay(selected);
       setCalendarDays(merged);
     });
   }, [user?.id, fetchMeetings, visibleMonth]);
