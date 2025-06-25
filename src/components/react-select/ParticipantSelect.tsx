@@ -26,7 +26,7 @@ const CustomOption = (props) => {
       {...innerProps}
       className="transition-colors flex text-center items-center p-2 bg-white hover:bg-gray-100"
     >
-      {/* {data.user.profile.avatarUrl && (
+      {data.user.profile.avatarUrl ? (
         <img
           src={data.user.profile.avatarUrl}
           alt={data.label}
@@ -37,10 +37,9 @@ const CustomOption = (props) => {
             marginRight: 10,
           }}
         />
-      )} */}
-      {data.user.profile.avatarUrl && (
+      ) : (
         <img
-          src="https://placehold.co/30"
+          src="https://placehold.co/128"
           alt={data.label}
           style={{
             width: 30,
@@ -53,7 +52,9 @@ const CustomOption = (props) => {
       <div>
         <div>
           {data.label}
-          {data.user.id == currentUser?.id && <span className="text-gray-600"> (you)</span>}
+          {data.user.id == currentUser?.id && (
+            <span className="text-gray-600"> (you)</span>
+          )}
         </div>
       </div>
     </div>

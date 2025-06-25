@@ -48,11 +48,19 @@ export default function Users() {
       {users.map((user, idx: number) => (
         <li key={user.id} className="flex justify-between gap-x-6 py-5">
           <div className="flex min-w-0 gap-x-4">
-            {/* <img
-              alt=""
-              src={user.profile.avatarUrl}
-              className="size-12 flex-none rounded-full bg-gray-50"
-            /> */}
+            {user.profile.avatarUrl ? (
+              <img
+                alt=""
+                src={user.profile.avatarUrl}
+                className="size-12 flex-none rounded-full bg-gray-50"
+              />
+            ) : (
+              <img
+                alt=""
+                src="https://placehold.co/128"
+                className="size-12 flex-none rounded-full bg-gray-50"
+              />
+            )}
             <div className="min-w-0 flex-auto">
               <p className="text-sm/6 font-semibold text-gray-900">
                 <a href={user.profile.href} className="hover:underline">
@@ -72,21 +80,6 @@ export default function Users() {
           <div className="flex shrink-0 items-center gap-x-6">
             <div className="hidden sm:flex sm:flex-col sm:items-end">
               <p className="text-sm/6 text-gray-900">{user.role}</p>
-              {/* {person.lastSeen ? (
-                <p className="mt-1 text-xs/5 text-gray-500">
-                  Last seen{" "}
-                  <time dateTime={person.lastSeenDateTime}>
-                    {person.lastSeen}
-                  </time>
-                </p>
-              ) : (
-                <div className="mt-1 flex items-center gap-x-1.5">
-                  <div className="flex-none rounded-full bg-emerald-500/20 p-1">
-                    <div className="size-1.5 rounded-full bg-emerald-500" />
-                  </div>
-                  <p className="text-xs/5 text-gray-500">Online</p>
-                </div>
-              )} */}
             </div>
             {isAdmin() && (
               <Menu as="div" className="relative flex-none">
@@ -99,13 +92,6 @@ export default function Users() {
                   className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 ring-1 shadow-lg ring-gray-900/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                 >
                   <MenuItem>
-                    {/* <a
-                      href="#"
-                      className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
-                    >
-                      View profile
-                      <span className="sr-only">, {user.profile.name}</span>
-                    </a> */}
                     <button
                       type="button"
                       className="flex w-full px-2 py-2 text-s font-semibold text-gray-500 shadow-xs hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
