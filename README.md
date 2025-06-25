@@ -1,54 +1,121 @@
-# React + TypeScript + Vite
+# Meeting Calendar Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern web application for managing meetings, built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. It integrates with the [Meeting Calendar API backend](https://github.com/danielwennstrom/MeetingCalendarAPI-workshop) to provide a complete meeting scheduling and user management experience. Intended as a student project.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+-  **User Authentication**
+  - JWT-based login and registration
+  - Role-based access (user vs admin)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+-  **User Management**
+  - Admins can edit user details
+  - Password rules enforced during registration
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+-  **Calendar View**
+  - Monthly view with meeting markers
+  - Highlights today, selected day, and meetings
+
+-  **Meeting Management**
+  - Create and view meetings
+  - Meetings must be in the present or future
+
+-  **Tailwind CSS UI**
+  - Clean, responsive interface
+  - Reusable components and forms
+
+---
+
+## Tech Stack
+
+- [React](https://reactjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Hook Form](https://react-hook-form.com/)
+- [date-fns](https://date-fns.org/)
+- [Axios](https://axios-http.com/)
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or newer)
+- npm or yarn
+
+### Setup Instructions
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/danielwennstrom/MeetingCalendar-workshop.git
+cd MeetingCalendar-workshop
+
+# 2. Install dependencies
+npm install
+
+# 3. Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Frontend will run at:  
+`http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Make sure the backend is running at `http://localhost:8080`.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+---
+
+## Default Admin Credentials (for local testing)
+
 ```
+Username: admin  
+Password: L!Bcu4:EHXY;i#2
+```
+
+> These credentials are available via the backend seed data.
+
+---
+
+## Project Structure
+
+```
+src/
+├── components/         # Shared and reusable components
+├── enums/              # Enum definitions (e.g. MeetingLevel)
+├── hooks/              # Custom React hooks
+├── pages/              # Route views (e.g. Calendar, Login)
+├── routes/             # Route config and layout
+├── types/              # Shared types/interfaces
+├── utils/              # Utility functions
+├── App.tsx             # Main component
+├── main.tsx            # Entry point
+└── ...
+```
+
+---
+
+## Validation Rules
+
+- Passwords must include:
+  - 1 digit
+  - 1 lowercase + 1 uppercase letter
+  - 1 special character
+  - No spaces
+  - 8–16 characters
+
+Handled by `react-hook-form` + RegEx.
+
+---
+
+## API Integration
+
+The frontend is designed to integrate with the [MeetingCalendarAPI-workshop](https://github.com/danielwennstrom/MeetingCalendarAPI-workshop):
+
+- Uses JWTs for secure requests
+- Includes token in `Authorization` headers
+- Fetches meetings per month via API
+
+---
